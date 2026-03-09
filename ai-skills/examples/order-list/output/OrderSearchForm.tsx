@@ -10,10 +10,7 @@ interface OrderSearchFormProps {
   form: FormInstance;
 }
 
-const OrderSearchForm: React.FC<OrderSearchFormProps> = ({
-  onSearch,
-  form,
-}) => {
+const OrderSearchForm: React.FC<OrderSearchFormProps> = ({ onSearch, form }) => {
   const onReset = () => {
     form.resetFields();
     onSearch();

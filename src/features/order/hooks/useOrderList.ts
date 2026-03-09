@@ -3,21 +3,18 @@ import { useEffect, useState } from 'react';
 import type { FormInstance } from 'antd';
 
 import { DEFAULT_PAGINATION_PARAMS } from '@/features/shared/constants';
-import { queryOrderList } from '../services';
+import { fetchOrderList } from '../services';
 import type { OrderListInfo } from '../types';
 
 function getValues(form: FormInstance) {
-  const values = form.getFieldsValue();
-
-  // return transformer(values) // if need
-  return values;
+  return form.getFieldsValue();
 }
 
-interface OrderListOptions {
+interface UseOrderListOptions {
   form: FormInstance;
 }
 
-const useOrderList = (options: OrderListOptions) => {
+const useOrderList = (options: UseOrderListOptions) => {
   const { form } = options;
 
   const [orderListInfo, setOrderListInfo] = useState<OrderListInfo>();
@@ -27,22 +24,27 @@ const useOrderList = (options: OrderListOptions) => {
     fetchList();
   }, []);
 
-  function fetchList(params: { pageNo?: number } = {}) {
+  function fetchList(params: { pageNo?: number; pageSize?: number } = {}) {
     setLoading(true);
 
     const values = getValues(form);
 
-    queryOrderList({ ...DEFAULT_PAGINATION_PARAMS, ...params, ...values })
+    fetchOrderList({ ...DEFAULT_PAGINATION_PARAMS, ...params, ...values })
       .then((res) => {
-        setOrderListInfo(res.data);
+        setOrderListInfo({
+          list: res.list,
+          total: res.total,
+          pageNo: params.pageNo || DEFAULT_PAGINATION_PARAMS.pageNo,
+          pageSize: params.pageSize || DEFAULT_PAGINATION_PARAMS.pageSize,
+        });
       })
       .finally(() => {
         setLoading(false);
       });
   }
 
-  const onPageChange = (pageNo: number) => {
-    fetchList({ pageNo });
+  const onPageChange = (pageNo: number, pageSize: number) => {
+    fetchList({ pageNo, pageSize });
   };
 
   const onSearch = () => {
@@ -52,9 +54,9 @@ const useOrderList = (options: OrderListOptions) => {
   return {
     loading,
     orderListInfo,
-    setLoading,
     onPageChange,
     onSearch,
+    refresh: fetchList,
   };
 };
 

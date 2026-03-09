@@ -97,7 +97,8 @@ import use{Domain}List from '@/features/{domain}/hooks/use{Domain}List';
 import {Domain}SearchForm from '@/features/{domain}/components/{Domain}SearchForm';
 import {Domain}Table from '@/features/{domain}/components/{Domain}Table';
 
-import styles from './index.less';
+// 如需要样式，取消下面注释
+// import styles from './index.less';
 
 interface {PageName}Props {
   // 页面级 props（通常路由页面无 props）
@@ -108,11 +109,10 @@ const {PageName}: FC<{PageName}Props> = () => {
 
   return (
     <PageContainer>
-      <{Domain}SearchForm onSearch={onSearch} loading={loading} />
+      <{Domain}SearchForm onSearch={onSearch} />
       <{Domain}Table
         dataSource={list}
         total={total}
-        loading={loading}
         pagination={{
           current: queryParams.pageNo,
           pageSize: queryParams.pageSize,
@@ -147,7 +147,8 @@ import { StatusTag } from '@/features/shared/components/StatusTag';
 
 import { useSearchParams } from 'umi';
 
-import styles from './index.less';
+// 如需要样式，取消下面注释
+// import styles from './index.less';
 
 const OrderDetailPage = () => {
   const [params] = useSearchParams();

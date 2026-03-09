@@ -9,9 +9,7 @@ interface ColumnOptions {
   onEdit?(record: OrderDTO): void;
 }
 
-export const getOrderColumns = (
-  options?: ColumnOptions,
-): ColumnsType<OrderDTO> => {
+export const getOrderColumns = (options?: ColumnOptions): ColumnsType<OrderDTO> => {
   return [
     {
       title: '订单号',
@@ -46,11 +44,7 @@ export const getOrderColumns = (
       width: 100,
       render: (_, record) => (
         <Space size="middle">
-          <Button
-            type="link"
-            size="small"
-            onClick={() => options?.onEdit?.(record)}
-          >
+          <Button type="link" size="small" onClick={() => options?.onEdit?.(record)}>
             详情
           </Button>
         </Space>

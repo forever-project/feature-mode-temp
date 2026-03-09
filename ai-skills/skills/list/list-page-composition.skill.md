@@ -187,6 +187,30 @@ src/features/{domain}/
 - 编辑弹窗通过 `{Domain}ListWithModal` + `use{Domain}Edit` 实现（弹窗模式）
 - 详情/编辑跳转通过 `history.push` 从 Page 层触发（跳转模式）
 
+### 路由挂载约定（Umi Max）
+
+- **列表页面文件生成后，必须在 `.umirc.ts` 的 `routes` 中显式挂载路由入口**，否则页面无法通过菜单或 URL 访问。
+- 常见约定：
+  - 路径：`/{domain}/list`，例如 `/order/list`
+  - 组件：`@/pages/{domain}/{PageName}`，例如 `@/pages/order/OrderList`
+  - 可选字段：`name`（用于菜单展示）、`icon`、`access`（权限）
+- 示例：
+
+```ts
+routes: [
+  {
+    path: '/',
+    redirect: '/order/list',
+  },
+  {
+    name: '订单列表',
+    path: '/order/list',
+    component: '@/pages/order/OrderList',
+    icon: 'table',
+  },
+];
+```
+
 ## Rules
 
 - **必须复用已有能力**
@@ -198,6 +222,7 @@ src/features/{domain}/
 - **保持布局一致**
   - 页面外层使用 `Spin` 包裹整个内容，控制 loading 状态
   - 使用 `PageContainer` 或 `Card` 提供页面级布局
+  - **优先使用 Tailwind CSS 完成微调布局（如 Space、Margin、Padding）**
 - **职责单一**
   - Page 只负责组合组件，不承载复杂业务逻辑
   - 编辑弹窗逻辑封装在 `{Domain}ListWithModal` 或独立 hook 中
@@ -205,8 +230,11 @@ src/features/{domain}/
   - **禁止在 pages 目录下创建 types.ts 文件**
   - Props 类型直接在页面文件中定义
   - 领域通用类型放在 `src/features/{domain}/types.ts`
-- **方法命名**
-  - 事件处理方法使用 `onXXX` 命名，如 `onCreate`、`onEdit`、`onSearch`
+- **方法声明与提升**
+  - 在 `useEffect` 等 hook 中调用的组件内部方法，建议使用 `function` 关键字声明并放置在 hook 调用之后。
+  - 其他普通事件回调建议使用 `const` 箭头函数。
+- **路由必须显式配置**
+  - 生成新的列表页后，AI 必须检查 `.umirc.ts` 中是否已存在对应路由；如不存在，生成或建议添加 routes 配置
 
 ## Usage Scenarios
 

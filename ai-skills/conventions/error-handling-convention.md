@@ -360,12 +360,7 @@ function useAsync<T>(asyncFunction: () => Promise<T>) {
 }
 
 // 使用
-const {
-  data,
-  loading,
-  error,
-  execute: fetchUsers,
-} = useAsync(() => fetchUserList(query));
+const { data, loading, error, execute: fetchUsers } = useAsync(() => fetchUserList(query));
 ```
 
 ## Rules

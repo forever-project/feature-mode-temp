@@ -1,22 +1,29 @@
+import React from 'react';
+
 import { PageContainer } from '@ant-design/pro-components';
 import { Form, Spin } from 'antd';
 
-import OrderSearchForm from '@/features/order/components/OrderSearchForm';
-import OrderTable from '@/features/order/components/OrderTable';
+import OrderFilterForm from '@/features/order/components/OrderFilterForm';
+import OrderListWithModal from '@/features/order/components/OrderListWithModal';
 import useOrderList from '@/features/order/hooks/useOrderList';
 
-const OrderListPage = () => {
+const OrderListPage: React.FC = () => {
   const [form] = Form.useForm();
 
-  const { loading, orderListInfo, onPageChange, onSearch } = useOrderList({
-    form,
-  });
+  const { loading, orderListInfo, onPageChange, onSearch, refresh } =
+    useOrderList({
+      form,
+    });
 
   return (
     <Spin spinning={loading}>
       <PageContainer>
-        <OrderSearchForm onSearch={onSearch} form={form} />
-        <OrderTable orderListInfo={orderListInfo} onPageChange={onPageChange} />
+        <OrderFilterForm onSearch={onSearch} form={form} />
+        <OrderListWithModal
+          orderListInfo={orderListInfo}
+          onPageChange={onPageChange}
+          onRefresh={refresh}
+        />
       </PageContainer>
     </Spin>
   );

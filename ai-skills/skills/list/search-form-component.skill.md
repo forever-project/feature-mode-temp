@@ -119,10 +119,9 @@ import { Form, Input, Button, Space, Card } from 'antd';
 
 interface {Domain}SearchFormProps {
   onSearch(values: any): void;
-  loading?: boolean;
 }
 
-const {Domain}SearchForm = ({ onSearch, loading }: {Domain}SearchFormProps) => {
+const {Domain}SearchForm = ({ onSearch }: {Domain}SearchFormProps) => {
   const [form] = Form.useForm();
 
   return (
@@ -133,7 +132,7 @@ const {Domain}SearchForm = ({ onSearch, loading }: {Domain}SearchFormProps) => {
         </Form.Item>
         <Form.Item>
           <Space>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button type="primary" htmlType="submit">
               查询
             </Button>
             <Button onClick={() => form.resetFields()}>

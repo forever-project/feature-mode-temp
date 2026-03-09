@@ -68,7 +68,8 @@ import { useSearchParams } from 'umi';
 import { fetch{Domain}Detail } from '@/features/{domain}/services';
 import { {Domain} } from '@/features/{domain}/types';
 
-import styles from './index.less';
+// 如需要样式，取消下面注释
+// import styles from './index.less';
 
 export default function {PageName}() {
   // 从 URL 获取参数
@@ -125,6 +126,7 @@ export default function {PageName}() {
 - **布局统一**
   - 使用 `Card` + `Descriptions` 实现详情展示
   - 根据信息复杂度选择 `column` 值（简单信息用 1-2 列，复杂信息用 3 列）
+  - **优先使用 Tailwind CSS 类名处理微调样式**
 - **类型组织**
   - **禁止在 pages 目录下创建 types.ts 文件**
   - 所有类型定义统一在 `src/features/{domain}/types.ts` 管理

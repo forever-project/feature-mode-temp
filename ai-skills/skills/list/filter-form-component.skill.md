@@ -75,7 +75,8 @@ import { Button, Form, Input, Select, Space } from 'antd';
 
 import { {Domain}ListQuery } from '../../types';
 
-import styles from './index.less';
+// 如需要样式，取消下面注释
+// import styles from './index.less';
 
 interface {Domain}FilterFormProps {
   value?: Partial<{Domain}ListQuery>;
@@ -168,9 +169,9 @@ export function {Domain}FilterForm(props: {Domain}FilterFormProps) {
 
 ## Comparison with SearchForm
 
-| 特性     | FilterForm             | SearchForm               |
-| -------- | ---------------------- | ------------------------ |
-| 使用场景 | Card 内嵌              | 独立使用（自带 Card）    |
-| 初始值   | 支持 `value` 属性      | 通过 Form 初始值         |
-| 布局     | 需外部包裹 Card        | 自带 Card 包裹           |
-| 回调参数 | `onSearch` / `onReset` | `onSearch`（含 loading） |
+| 特性     | FilterForm             | SearchForm            |
+| -------- | ---------------------- | --------------------- |
+| 使用场景 | Card 内嵌              | 独立使用（自带 Card） |
+| 初始值   | 支持 `value` 属性      | 通过 Form 初始值      |
+| 布局     | 需外部包裹 Card        | 自带 Card 包裹        |
+| 回调参数 | `onSearch` / `onReset` | `onSearch`            |

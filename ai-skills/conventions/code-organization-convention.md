@@ -55,7 +55,8 @@ import { fetchDomainDetail } from '@/features/{domain}/services';
 import { Domain, DomainListQuery } from '@/features/{domain}/types';
 import { formatDate } from '@/utils/date';
 
-import styles from './index.less';
+// 如需要样式，取消下面注释
+// import styles from './index.less';
 
 interface DomainListPageProps {}
 
@@ -103,9 +104,9 @@ const DomainListPage: FC<DomainListPageProps> = (props) => {
       <Card title="列表">
         <DomainTable
           data={list}
-          loading={loading}
           pagination={{
-            current: queryParams.pageNo,
+            // 优先根据上下文（如 API 定义）决定使用 pageNo 还是 page
+            current: queryParams.pageNo || queryParams.page,
             pageSize: queryParams.pageSize,
           }}
           onPageChange={onPageChange}
@@ -141,15 +142,18 @@ export default DomainListPage;
   - 再使用 hooks
   - 最后定义方法
 - **方法声明**
-  - 如果 hooks 里面调用了组件内部声明的方法，使用 `function` 声明
-  - 否则使用 `const` 声明箭头函数
+  - 如果 hooks (如 `useEffect`) 里面调用了组件内部声明的方法，**必须**使用 `function` 关键字声明，且该方法定义应放在调用它的 hook 之后（利用 function 提升特性）。
+  - 其他不涉及提升的普通事件处理方法（如 `onSearch`, `onEdit`）建议使用 `const` 声明箭头函数。
 - **空行分隔**
   - 不同类别的导入之间空一行
   - 不同类别的声明之间空一行
 - **文件大小限制**
-  - **TSX/JSX 文件代码行数不超过 500 行**
-  - 超过 500 行的文件应该拆分为多个子组件或抽离逻辑到 hooks
+  - **TSX/JSX 文件代码行数不超过 300 行**
+  - 超过 300 行的文件应该拆分为多个子组件或抽离逻辑到 hooks
   - 私有子组件使用 `_` 前缀命名（如 `_SubComponent.tsx`）
+- **分页字段命名**
+  - 优先遵循上下文（API 文档、现有 TS 类型）定义的字段名
+  - 如果上下文中没有定义，默认使用 `pageNo` 和 `pageSize`
 
 ## Usage Scenarios
 

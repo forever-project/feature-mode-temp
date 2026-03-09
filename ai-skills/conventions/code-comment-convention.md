@@ -41,9 +41,7 @@
  * const { list, total } = await fetchUserList({ page: 1, pageSize: 10 });
  * ```
  */
-export async function fetchUserList(
-  query: UserListQuery,
-): Promise<UserListResult> {
+export async function fetchUserList(query: UserListQuery): Promise<UserListResult> {
   // ...
 }
 
@@ -53,8 +51,6 @@ export async function fetchUserList(
 interface UserTableProps {
   /** 用户数据列表 */
   data: User[];
-  /** 加载状态 */
-  loading: boolean;
   /** 编辑回调 */
   onEdit: (user: User) => void;
 }
@@ -121,7 +117,8 @@ import UserTable from '@/components/UserTable';
 
 import { fetchUserList } from '@/services/user';
 
-import styles from './index.less';
+// 如需要样式，取消下面注释
+// import styles from './index.less';
 ```
 
 ## 应该注释的场景
@@ -204,10 +201,10 @@ function fetchOrderList() {
 ### 3. 冗余的注释
 
 ```typescript
-// ❌ 重复代码逻辑的注释
-// 如果 loading 为 true，返回加载中
-if (loading) {
-  return <Loading />;
+// ❌ 对显而易见的代码重复注释
+// 如果 count 大于 0，设置显示状态
+if (count > 0) {
+  setVisible(true);
 }
 ```
 

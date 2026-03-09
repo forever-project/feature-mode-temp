@@ -36,13 +36,12 @@ metadata:
   rowKey="id"
   columns={columns}
   dataSource={listInfo.list}
-  loading={loading}
   pagination={{
     current: listInfo.pageNo,
     pageSize: listInfo.pageSize,
     total: listInfo.total,
     onChange: onPageChange,
-    showSizeChanger: true,
+    showSizeChanger: false,
   }}
 />
 ```
@@ -73,12 +72,11 @@ import { DEFAULT_PAGINATION_PARAMS } from '@/features/shared/constants';
 
 interface {Domain}TableProps {
   {domain}ListInfo?: {Domain}ListInfo;
-  loading?: boolean;
   onPageChange: (pageNo: number, pageSize: number) => void;
 }
 
 const {Domain}Table: React.FC<{Domain}TableProps> = (props) => {
-  const { {domain}ListInfo = {}, loading, onPageChange } = props;
+  const { {domain}ListInfo = {}, onPageChange } = props;
 
   const columns = get{Domain}Columns();
 
@@ -87,13 +85,12 @@ const {Domain}Table: React.FC<{Domain}TableProps> = (props) => {
       rowKey="id"
       columns={columns}
       dataSource={listInfo.list}
-      loading={loading}
       pagination={{
         current: {domain}ListInfo.pageNo || DEFAULT_PAGINATION_PARAMS.pageNo,
         pageSize: {domain}ListInfo.pageSize || DEFAULT_PAGINATION_PARAMS.pageSize,
         total: {domain}ListInfo.total,
         onChange: onPageChange,
-        showSizeChanger: true,
+        showSizeChanger: false,
       }}
     />
   );
@@ -117,14 +114,13 @@ import { DEFAULT_PAGINATION_PARAMS } from '@/features/shared/constants';
 
 interface {Domain}TableProps {
   {domain}ListInfo?: {Domain}ListInfo;
-  loading?: boolean;
   onPageChange: (pageNo: number, pageSize: number) => void;
   onEdit: (record: any) => void;
   onDetail: (record: any) => void;
 }
 
 const {Domain}Table: React.FC<{Domain}TableProps> = (props) => {
-  const { {domain}ListInfo = {}, loading, onPageChange, onEdit, onDetail } = props;
+  const { {domain}ListInfo = {}, onPageChange, onEdit, onDetail } = props;
 
   const columns = build{Domain}Columns({
     onEdit,
@@ -136,13 +132,12 @@ const {Domain}Table: React.FC<{Domain}TableProps> = (props) => {
       rowKey="id"
       columns={columns}
       dataSource={listInfo.list}
-      loading={loading}
       pagination={{
         current: {domain}ListInfo.pageNo || DEFAULT_PAGINATION_PARAMS.pageNo,
         pageSize: {domain}ListInfo.pageSize || DEFAULT_PAGINATION_PARAMS.pageSize,
         total: {domain}ListInfo.total,
         onChange: onPageChange,
-        showSizeChanger: true,
+        showSizeChanger: false,
         showTotal: (total) => `共 ${total} 条`,
       }}
     />
@@ -225,8 +220,6 @@ export const build{Domain}Columns = (options?: ColumnOptions): ColumnsType<{Doma
   - 分页切换回调统一为 `onPageChange(page, pageSize)`
 - **rowKey 设置**
   - 必须设置 `rowKey` 属性，通常为 `id`
-- **loading 状态**
-  - 通过 `loading` 属性控制表格加载状态
 - **职责单一**
   - 表格组件只负责展示数据和分页
   - 不处理数据获取逻辑

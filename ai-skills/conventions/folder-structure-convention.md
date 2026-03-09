@@ -134,7 +134,8 @@ import { UserTable } from '@/features/user/components/UserTable';
 
 import { formatDate } from '@/utils/format';
 
-import styles from './index.less';
+// 如需要样式，取消下面注释
+// import styles from './index.less';
 ```
 
 ## 路径别名

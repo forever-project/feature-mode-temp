@@ -10,13 +10,12 @@ import { getOrderColumns } from './_columns';
 
 interface OrderTableProps {
   orderListInfo?: OrderListInfo;
-  loading?: boolean;
   onPageChange: (page: number, pageSize: number) => void;
   onEdit: (record: any) => void;
 }
 
 const OrderTable: React.FC<OrderTableProps> = (props) => {
-  const { orderListInfo = {}, loading, onPageChange, onEdit } = props;
+  const { orderListInfo = {}, onPageChange, onEdit } = props;
 
   const columns = getOrderColumns({
     onEdit,
@@ -27,13 +26,12 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       rowKey="id"
       columns={columns}
       dataSource={orderListInfo.list}
-      loading={loading}
       pagination={{
         current: orderListInfo.pageNo || DEFAULT_PAGINATION_PARAMS.pageNo,
         pageSize: orderListInfo.pageSize || DEFAULT_PAGINATION_PARAMS.pageSize,
         total: orderListInfo.total,
         onChange: onPageChange,
-        showSizeChanger: true,
+        showSizeChanger: f,
       }}
     />
   );

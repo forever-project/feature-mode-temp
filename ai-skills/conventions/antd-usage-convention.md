@@ -15,11 +15,15 @@ import type { TableProps, FormProps } from 'antd';
 import Antd from 'antd';
 ```
 
-### ProComponents 导入
+### ProComponents 导入与限制
 
 ```typescript
-// ✅ 正确
-import { PageContainer, ProTable } from '@ant-design/pro-components';
+// ✅ 正确：首选 PageContainer 等布局容器组件
+import { PageContainer } from '@ant-design/pro-components';
+
+// 💡 导入原则：
+// 1. 若所需组件在项目中未定义，必须默认从 'antd' 导入（如 Table, Form, Modal）。
+// 2. 除非有明确的业务逻辑需求或团队共识，否则不应优先使用 ProTable、ProForm 等重型组件。
 ```
 
 ## 表单使用
@@ -32,11 +36,7 @@ const [form] = Form.useForm<UserForm>();
 
 // 表单布局
 <Form form={form} layout="vertical">
-  <Form.Item
-    name="name"
-    label="名称"
-    rules={[{ required: true, message: '请输入名称' }]}
-  >
+  <Form.Item name="name" label="名称" rules={[{ required: true, message: '请输入名称' }]}>
     <Input placeholder="请输入" />
   </Form.Item>
 </Form>;
@@ -74,7 +74,7 @@ const [form] = Form.useForm<UserForm>();
     current: page,
     pageSize,
     total,
-    showSizeChanger: true,
+    showSizeChanger: false,
     showTotal: (total) => `共 ${total} 条`,
   }}
 />
@@ -98,9 +98,7 @@ const columns: ColumnsType<User> = [
     title: '状态',
     dataIndex: 'status',
     render: (status) => (
-      <Tag color={status === 1 ? 'green' : 'red'}>
-        {status === 1 ? '启用' : '禁用'}
-      </Tag>
+      <Tag color={status === 1 ? 'green' : 'red'}>{status === 1 ? '启用' : '禁用'}</Tag>
     ),
   },
 ];
@@ -142,8 +140,8 @@ const columns: ColumnsType<User> = [
 <Modal
   title="编辑用户"
   open={visible}
-  onOk={handleSubmit}
-  onCancel={handleCancel}
+  onOk={onOk}
+  onCancel={handleConCancelancel}
   confirmLoading={submitting}
   destroyOnClose
 >

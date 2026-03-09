@@ -65,7 +65,7 @@ const mockUsers = [
 describe('UserTable', () => {
   // 渲染测试
   it('should render user list correctly', () => {
-    render(<UserTable data={mockUsers} loading={false} />);
+    render(<UserTable data={mockUsers} />);
 
     expect(screen.getByText('张三')).toBeInTheDocument();
     expect(screen.getByText('李四')).toBeInTheDocument();
@@ -82,16 +82,9 @@ describe('UserTable', () => {
     expect(onEdit).toHaveBeenCalledWith(mockUsers[0]);
   });
 
-  // 加载状态测试
-  it('should show loading state', () => {
-    render(<UserTable data={[]} loading={true} />);
-
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
-  });
-
   // 空数据测试
   it('should show empty state when no data', () => {
-    render(<UserTable data={[]} loading={false} />);
+    render(<UserTable data={[]} />);
 
     expect(screen.getByText('暂无数据')).toBeInTheDocument();
   });
@@ -110,12 +103,10 @@ jest.mock('@/features/user/services');
 
 describe('UserList', () => {
   it('should fetch and display user list', async () => {
-    const mockFetchUserList = jest
-      .spyOn(userService, 'fetchUserList')
-      .mockResolvedValue({
-        list: [{ id: 1, name: '张三' }],
-        total: 1,
-      });
+    const mockFetchUserList = jest.spyOn(userService, 'fetchUserList').mockResolvedValue({
+      list: [{ id: 1, name: '张三' }],
+      total: 1,
+    });
 
     render(<UserList />);
 
@@ -172,9 +163,7 @@ describe('useUserList', () => {
     });
 
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.objectContaining({ name: '张三', page: 1 }),
-      );
+      expect(mockFetch).toHaveBeenCalledWith(expect.objectContaining({ name: '张三', page: 1 }));
     });
   });
 
@@ -190,9 +179,7 @@ describe('useUserList', () => {
     });
 
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.objectContaining({ pageNo: 2, pageSize: 20 }),
-      );
+      expect(mockFetch).toHaveBeenCalledWith(expect.objectContaining({ pageNo: 2, pageSize: 20 }));
     });
   });
 });
@@ -280,9 +267,7 @@ describe('user services', () => {
       const error = new Error('Network Error');
       (request.get as jest.Mock).mockRejectedValue(error);
 
-      await expect(fetchUserList({ pageNo: 1 })).rejects.toThrow(
-        'Network Error',
-      );
+      await expect(fetchUserList({ pageNo: 1 })).rejects.toThrow('Network Error');
     });
   });
 

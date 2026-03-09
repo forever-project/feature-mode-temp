@@ -215,9 +215,9 @@ export default {Domain}EditModal;
 - **表单布局**
   - 统一使用 `layout="vertical"`
   - 必填项必须具备 `rules={[{ required: true }]}`
-- **方法命名**
-  - 内部事件处理方法使用 `onXXX` 命名，如 `onOkClick`
-  - Props 回调使用 `onXXX` 命名，如 `onOk`、`onCancel`
+- **方法声明与提升**
+  - 在 `useEffect` 中调用的组件内部方法必须使用 `function` 关键字声明并放置在 hook 调用之后。
+  - 普通事件处理方法（如 `onOkClick`）和 Props 回调使用 `const` 箭头函数。
 - **属性更新**
   - 使用 `destroyOnHidden` 替代已废弃的 `destroyOnClose`
 

@@ -56,7 +56,9 @@ const useStudentList = (options: UseStudentListOptions) => {
     studentListInfo,
     onPageChange,
     onSearch,
+    refresh: fetchList,
   };
 };
 
 export default useStudentList;
+

@@ -45,8 +45,8 @@ const useOrderList = (options: UseOrderListOptions) => {
       });
   }
 
-  const onPageChange = (page: number, pageSize: number) => {
-    fetchList({ page, pageSize });
+  const onPageChange = (pageNo: number, pageSize: number) => {
+    fetchList({ pageNo, pageSize });
   };
 
   const onSearch = () => {

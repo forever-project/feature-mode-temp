@@ -138,6 +138,9 @@ export async function fetch{Domain}List(
       resolve({
         list,
         total: 128,
+        // 实际开发中根据 API 确定字段，默认使用 pageNo/pageSize
+        pageNo: params.pageNo || params.page || 1,
+        pageSize: params.pageSize || 10,
       });
     }, 400);
   });
@@ -203,6 +206,8 @@ export async function query{Domain}List(
       resolve({
         list,
         total: 100,
+        pageNo: params.pageNo || 1,
+        pageSize: params.pageSize || 10,
       });
     }, 400);
   });
@@ -231,7 +236,7 @@ export async function query{Domain}List(
   - 删除操作：`delete{Domain}` 或 `remove{Domain}`
 - **DTO 转换**
   - 当后端返回与前端模型不一致时，在 service 层完成 DTO 到领域模型的转换
-  - 分页参数与后端字段的映射在 service 层完成（如 `page` -> `pageNo`）
+  - **分页参数字段命名**：优先遵循上下文（API 文档、现有 TS 类型）定义的字段名，fallback 使用 `pageNo`/`pageSize`
 - **错误处理**
   - 具体错误处理策略遵循 `error-handler.skill.md` 中的约定
   - service 层可将业务错误转化为异常抛出，由调用方按需捕获

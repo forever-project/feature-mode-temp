@@ -180,7 +180,8 @@ import type { ColumnsType } from 'antd/es/table';
 
 import type { {Domain}DTO } from '../../types';
 
-import styles from './index.less';
+// 如需要样式，取消下面注释
+// import styles from './index.less';
 
 interface Options {
   onEdit?(record: {Domain}DTO): void;

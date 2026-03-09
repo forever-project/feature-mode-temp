@@ -56,6 +56,7 @@ components/
 - 必须包含 `index.tsx` 作为唯一对外出口
 - 主组件文件与目录名保持一致
 - 私有子组件使用下划线前缀（如 `_columns.tsx`）
+- **优先使用 Tailwind CSS 类名处理样式，仅在必要时创建 `index.less`**
 
 ### 2. Hooks 目录
 
@@ -95,6 +96,37 @@ types.ts                    # 业务模型定义
 - 包含实体类型、查询参数类型、响应类型
 - 可选包含 DTO 类型
 - 使用 TypeScript 接口定义
+
+### 5. Pages 与路由（Umi Max 项目特有约束）
+
+虽然本 Skill 主要约束 `src/features/` 目录，但在实际落地业务域时，**必须同时确保 pages 层与路由配置就绪**：
+
+- 页面文件路径：
+
+```text
+src/pages/{domain}/
+└── {PageName}/
+    └── index.tsx
+```
+
+- 路由配置（`.umirc.ts`）中必须显式增加对应入口，例如订单列表：
+
+```ts
+routes: [
+  {
+    path: '/',
+    redirect: '/order/list',
+  },
+  {
+    name: '订单列表',
+    path: '/order/list',
+    component: '@/pages/order/OrderList',
+    icon: 'table',
+  },
+];
+```
+
+> 规则：**创建/重构某个业务域的列表或详情页面时，AI 不仅要生成 `src/features/{domain}` 下的能力，还要确保在 `src/pages/{domain}/{PageName}` 创建页面文件，并在 `.umirc.ts` 的 `routes` 中挂上入口。**
 
 ## Complete Example
 

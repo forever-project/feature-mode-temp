@@ -12,13 +12,12 @@ import type { OrderListInfo } from '../../types';
 
 interface OrderListWithModalProps {
   orderListInfo?: OrderListInfo;
-  loading?: boolean;
   onPageChange: (page: number, pageSize: number) => void;
   onRefresh: () => void;
 }
 
 const OrderListWithModal: React.FC<OrderListWithModalProps> = (props) => {
-  const { orderListInfo, loading, onPageChange, onRefresh } = props;
+  const { orderListInfo, onPageChange, onRefresh } = props;
 
   const { modalInfo, openModal, closeModal, submit } = useOrderEdit({
     onSuccess: onRefresh,
@@ -40,16 +39,11 @@ const OrderListWithModal: React.FC<OrderListWithModalProps> = (props) => {
       >
         <OrderTable
           orderListInfo={orderListInfo}
-          loading={loading}
           onPageChange={onPageChange}
           onEdit={(record) => openModal('edit', record)}
         />
       </Card>
-      <OrderEditModal
-        modalInfo={modalInfo}
-        onCancel={closeModal}
-        onOk={submit}
-      />
+      <OrderEditModal modalInfo={modalInfo} onCancel={closeModal} onOk={submit} />
     </>
   );
 };

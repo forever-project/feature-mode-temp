@@ -86,7 +86,34 @@ const a = 1;
 const b = 2;
 ```
 
-## 行长度
+## 样式开发规范 (Tailwind CSS)
+
+### 优先使用 Tailwind CSS
+
+- 优先使用 Tailwind CSS 原子类完成布局和样式。
+- 只有在以下情况才使用 Less：
+  - 需要深度覆盖 Ant Design 内部样式。
+  - 非常复杂的动态动画或计算样式（且无法通过 `[]` 语法解决）。
+  - 需要复用大量的 CSS 代码块。
+
+### 类名组织
+
+- 类名顺序：布局 (flex, grid, pos) -> 尺寸 (w, h, m, p) -> 排版 (text, font) -> 装饰 (bg, border, shadow) -> 交互 (hover, active)。
+- 合理使用 `clsx` 或 `tailwind-merge`（如果项目中已安装）来管理动态类名。
+
+```tsx
+// ✅ 正确：优先使用 Tailwind
+<div className="flex items-center justify-between p-4 bg-white border-b">
+  <span className="text-lg font-bold text-gray-800">标题</span>
+  <Button type="primary">操作</Button>
+</div>
+
+// ❌ 不推荐：过度依赖 Less
+// index.tsx
+<div className={styles.header}>...</div>
+// index.less
+.header { display: flex; align-items: center; ... }
+```
 
 - 单行不超过 100 个字符
 - 过长时换行
@@ -122,7 +149,8 @@ import { Button } from 'antd';
 
 import { UserTable } from '@/components/UserTable';
 
-import styles from './index.less';
+// 如需要样式，取消下面注释
+// import styles from './index.less';
 
 const Component = () => {
   const [state, setState] = useState();

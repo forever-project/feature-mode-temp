@@ -185,6 +185,9 @@ export interface {Domain}DTO {
 - **DTO 转换**
   - 当后端返回与前端模型不一致时，定义 DTO 类型
   - 在 service 层完成 DTO 到领域模型的转换
+- **分页参数命名**
+  - 首先遵循上下文（API 文档/现有代码结构）定义的字段名
+  - 如果上下文没有明确定义，默认使用 `pageNo` 和 `pageSize`
 
 ## Usage Scenarios
 

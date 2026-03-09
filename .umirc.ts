@@ -1,6 +1,6 @@
-import { defineConfig } from '@umijs/max';
+import { defineConfig } from "@umijs/max";
 
-import routes from './src/routes';
+import routes from "./src/routes";
 
 export default defineConfig({
   antd: {},
@@ -9,8 +9,9 @@ export default defineConfig({
   initialState: {},
   request: {},
   layout: {
-    title: 'feature-mode-temp',
+    title: "feature-mode-temp",
   },
   routes,
-  npmClient: 'pnpm',
+  npmClient: "pnpm",
+  tailwindcss: {},
 });

@@ -19,10 +19,10 @@ metadata:
 
 - **框架**: React 18 Function Component
 - **语言**: TypeScript（严格模式，禁止 `any`）
-- **UI 库**: Ant Design v5
+- **UI 库**: Ant Design v5 (核心原则：**首选 antd**。除 `PageContainer` 等容器组件外，若所需组件在本项目中尚未实现，必须默认从 `antd` 导入，保持代码透明度)
 - **请求库**: Umi Max Request（`import { request } from '@umijs/max'`）
 - **构建工具**: Umi Max（路由、状态管理、权限、请求）
-- **样式**: Less / CSS Modules
+- **样式**: 优先使用 Tailwind CSS（原子类），复杂样式或覆盖 antd 时使用 Less / CSS Modules
 
 ---
 
@@ -92,9 +92,11 @@ import { UserInfoCard } from '@/features/shared/components/UserInfoCard'; // 可
 
 ---
 
-## 3. 代码组织规范
+## 3. 代码组织规范（强制遵守）
 
-### 3.1 文件导入顺序（7 步法）
+### 3.1 文件导入顺序（强制 7 步法）
+
+所有文件必须严格遵守以下导入顺序，不同组之间必须保留空行：
 
 ```typescript
 // 1. React
@@ -112,8 +114,8 @@ import { useUserList } from '@/features/user/hooks/useUserList';
 import { fetchUserList } from '@/services/user';
 import { formatDate } from '@/utils/date';
 
-// 5. 样式
-import styles from './index.less';
+// 5. 样式（优先使用 Tailwind CSS 类名，如需 index.less 则导入）
+// import styles from './index.less';
 
 // 6. Props 类型声明
 interface UserListProps {
@@ -141,6 +143,13 @@ const Component = () => {
   const memoizedData = useMemo(() => process(list), [list]);
 
   // 4. 方法定义（使用 onXXX 命名）
+  // 注意：如果 useEffect 等 hook 调用了方法，该方法必须使用 function 声明并放在 hook 之后
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  function fetchData() { /* ... */ }
+
   const onSearch = () => { };
   const onSubmit = async () => { };
 
@@ -166,16 +175,16 @@ const Component = () => {
 
 ### 4.2 代码标识符
 
-| 类型 | 命名规范 | 示例 |
-| --- | --- | --- |
-| 组件 | PascalCase | `UserTable`, `OrderForm` |
-| Hooks | camelCase + use 前缀 | `useUserList`, `useOrderDetail` |
-| 函数 | camelCase | `fetchUserList`, `onSearch`, `onSubmit` |
-| 常量 | UPPER_SNAKE_CASE | `DEFAULT_PAGE_SIZE`, `MAX_RETRY` |
-| 布尔变量 | is/has/can 前缀 | `isLoading`, `hasError` |
-| 类型/接口 | PascalCase | `User`, `OrderListQuery` |
-| **事件处理** | **on + 动作** | `onSearch`, `onEdit`, `onCreate` |
-| 异步函数 | fetch/get/create/update/delete | `fetchUserList`, `createOrder` |
+| 类型         | 命名规范                       | 示例                                    |
+| ------------ | ------------------------------ | --------------------------------------- |
+| 组件         | PascalCase                     | `UserTable`, `OrderForm`                |
+| Hooks        | camelCase + use 前缀           | `useUserList`, `useOrderDetail`         |
+| 函数         | camelCase                      | `fetchUserList`, `onSearch`, `onSubmit` |
+| 常量         | UPPER_SNAKE_CASE               | `DEFAULT_PAGE_SIZE`, `MAX_RETRY`        |
+| 布尔变量     | is/has/can 前缀                | `isLoading`, `hasError`                 |
+| 类型/接口    | PascalCase                     | `User`, `OrderListQuery`                |
+| **事件处理** | **on + 动作**                  | `onSearch`, `onEdit`, `onCreate`        |
+| 异步函数     | fetch/get/create/update/delete | `fetchUserList`, `createOrder`          |
 
 ### 4.3 Props 类型命名
 
@@ -183,7 +192,6 @@ const Component = () => {
 // 组件名 + Props
 interface UserTableProps {
   data: User[];
-  loading: boolean;
   onEdit: (user: User) => void;
 }
 ```
@@ -205,8 +213,8 @@ interface UserTableProps {
 export interface {Domain}ListInfo {
   list: {Domain}[];
   total: number;
-  pageNo: number;      // 注意：统一使用 pageNo
-  pageSize: number;
+  pageNo: number;      // 默认使用 pageNo，但必须优先遵循上下文（API/已有代码）中定义的字段名
+  pageSize: number;    // 默认使用 pageSize，但必须优先遵循上下文中定义的字段名
 }
 
 // 弹窗状态结构
@@ -237,15 +245,14 @@ export interface ModalInfo {
 
 ```typescript
 // features/user/services/index.ts
-export async function fetchUserList(
-  params: UserListQuery,
-): Promise<UserListInfo> {
+export async function fetchUserList(params: UserListQuery): Promise<UserListInfo> {
   // 返回统一结构
   const res = await request.get('/api/users', { params });
   return {
     list: res.data.list,
     total: res.data.total,
-    pageNo: res.data.pageNo || params.pageNo,
+    // 提示：字段名应优先匹配上下文/API 返回的字段名，fallback 为 pageNo/pageSize
+    pageNo: res.data.pageNo || params.pageNo || res.data.page || params.page,
     pageSize: res.data.pageSize || params.pageSize,
   };
 }
@@ -269,7 +276,6 @@ export async function fetchUserList(
 // 2. Props 类型
 interface Props {
   userListInfo?: UserListInfo;
-  loading?: boolean;
   onEdit: (user: User) => void;
 }
 
@@ -286,18 +292,18 @@ export default UserTable;
 
 ```
 features/{domain}/components/{ComponentName}/
-├── index.tsx          # 对外出口
+├── index.tsx          # 对外出口（优先使用 Tailwind CSS）
 ├── _SubComponent.tsx  # 私有子组件（下划线前缀）
-└── index.less         # 样式（可选）
+└── index.less         # 样式（可选，仅在 Tailwind 无法满足时使用）
 ```
 
 ### 7.3 样式导入
 
-所有组件文件必须包含样式导入示例：
+优先使用 Tailwind CSS 提供的 Utility Classes。如果组件目录下确需 `index.less` 文件，则导入样式：
 
 ```typescript
-// 5. 样式
-import styles from './index.less';
+// 5. 样式（优先使用 Tailwind CSS，仅在必要时导入）
+// import styles from './index.less';
 ```
 
 ### 7.4 Ant Design 组件属性
@@ -425,6 +431,34 @@ const StudentListPage = () => {
 };
 ```
 
+### 9.4 路由配置要求（Umi Max）
+
+在本项目中，**页面文件本身并不等于路由已生效**，所有可访问入口必须显式配置在 Umi Max 路由中：
+
+- **必须**在 `.umirc.ts` 的 `routes` 数组中为新页面增加配置，例如：
+
+```ts
+export default defineConfig({
+  routes: [
+    {
+      path: '/',
+      redirect: '/order/list',
+    },
+    {
+      name: '订单列表',
+      path: '/order/list',
+      component: '@/pages/order/OrderList',
+      icon: 'table',
+    },
+  ],
+});
+```
+
+- 生成新的列表页或详情页时：
+  - 路径遵循 `/{domain}/{page}` 风格，如 `/order/list`、`/order/detail`
+  - `component` 使用 `@/pages/{domain}/{PageName}` 形式，不带 `index.tsx`
+  - 如需菜单展示，配置 `name`、`icon`，如需权限控制，结合 access 约定增加 `access` 字段
+
 ---
 
 ## 10. Git 提交规范
@@ -496,16 +530,17 @@ skills/*.skill.md
 - [ ] 使用了 React Function Component + TypeScript
 - [ ] 没有使用 `any` 类型
 - [ ] 导入顺序符合 7 步法
-- [ ] 包含样式导入示例 `import styles from './index.less'`
+- [ ] 如有 `index.less` 文件则导入样式
 - [ ] 没有在 pages 目录下创建 types.ts
 - [ ] 没有在页面中直接使用 request
-- [ ] **命名符合规范（事件处理使用 onXXX）**
-- [ ] **列表响应使用统一的 ListInfo 结构（list/total/pageNo/pageSize）**
+- [ ] **优先使用 Tailwind CSS 进行样式开发**
+- [ ] 命名符合规范（事件处理使用 onXXX）
+- [ ] **分页字段命名优先遵循上下文（API/TS 类型），无明确依据时使用 pageNo/pageSize**
 - [ ] **Form 实例在 Page 层创建并传递给子组件**
 - [ ] **Modal 使用 destroyOnHidden 而非 destroyOnClose**
 - [ ] Props 有明确的类型定义
 - [ ] 文件路径使用占位符（如 `{Domain}`, `{PageName}`）
-- [ ] **TSX/JSX 文件代码行数不超过 500 行**
+- [ ] **TSX/JSX 文件代码行数不超过 300 行**
 
 ---
 
@@ -537,8 +572,8 @@ src/features/{domain}/types.ts
 export interface {Domain}ListInfo {
   list: {Domain}[];
   total: number;
-  pageNo: number;
-  pageSize: number;
+  pageNo: number;      // 首选上下文定义的名称，默认 pageNo
+  pageSize: number;    // 首选上下文定义的名称，默认 pageSize
 }
 
 // 弹窗状态结构

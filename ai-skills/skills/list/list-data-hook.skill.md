@@ -47,8 +47,8 @@ Page (Container)
 export interface {Domain}ListInfo {
   list: {Domain}[];
   total: number;
-  pageNo: number;
-  pageSize: number;
+  pageNo: number;   // 优先使用上下文定义的名称，默认 pageNo
+  pageSize: number; // 优先使用上下文定义的名称，默认 pageSize
 }
 ```
 
@@ -62,7 +62,7 @@ export interface {Domain}ListInfo {
 
   // 操作方法
   onSearch: () => void,
-  onPageChange: (pageNo: number, pageSize: number) => void,
+  onPageChange: (current: number, pageSize: number) => void,
   refresh: () => void,
 }
 ```
@@ -106,7 +106,7 @@ const use{Domain}List = (options: Use{Domain}ListOptions) => {
     fetchList();
   }, []);
 
-  function fetchList(params: { pageNo?: number; pageSize?: number } = {}) {
+  function fetchList(params: { pageNo?: number; page?: number; pageSize?: number } = {}) {
     setLoading(true);
 
     const values = getValues(form);
@@ -114,10 +114,9 @@ const use{Domain}List = (options: Use{Domain}ListOptions) => {
     fetch{Domain}List({ ...DEFAULT_PAGINATION_PARAMS, ...params, ...values })
       .then((res) => {
         set{Domain}ListInfo({
-          list: res.list,
-          total: res.total,
-          pageNo: params.pageNo || DEFAULT_PAGINATION_PARAMS.pageNo,
-          pageSize: params.pageSize || DEFAULT_PAGINATION_PARAMS.pageSize,
+          // 优先匹配 res.data 中的字段名，fallback 使用 pageNo
+          pageNo: res.pageNo || res.page || params.pageNo || params.page || DEFAULT_PAGINATION_PARAMS.pageNo,
+          pageSize: res.pageSize || params.pageSize || DEFAULT_PAGINATION_PARAMS.pageSize,
         });
       })
       .finally(() => {
@@ -125,8 +124,9 @@ const use{Domain}List = (options: Use{Domain}ListOptions) => {
       });
   }
 
-  const onPageChange = (pageNo: number, pageSize: number) => {
-    fetchList({ pageNo, pageSize });
+  const onPageChange = (current: number, pageSize: number) => {
+    // 这里 current 可能对应 pageNo 或 page，根据上下文决定
+    fetchList({ pageNo: current, page: current, pageSize });
   };
 
   const onSearch = () => {
@@ -198,7 +198,7 @@ export const use{Domain}Edit = (options: Use{Domain}EditOptions = {}) => {
 - 使用外部传入的 `form` 获取筛选值，不自己管理筛选状态
 - Hook 内部不处理 UI 渲染，只管理数据和状态
 - 编辑弹窗状态独立为 `use{Domain}Edit`，可复用
-- 分页参数统一使用 `pageNo` / `pageSize`
+- 分页参数首选上下文字段名，默认推选使用 `pageNo` / `pageSize`
 - 方法命名使用 `onXXX` 而非 `handleXXX`
 
 ## Rules
@@ -209,11 +209,15 @@ export const use{Domain}Edit = (options: Use{Domain}EditOptions = {}) => {
   - form 实例在 Page 层创建，通过 options 传入 hook
   - 这样可以让多个 hook 共享同一个 form
 - **分页映射**
-  - 组件层使用 `pageNo`/`pageSize`，与后端通信时做字段映射
+  - 首先遵循上下文（API 文档/TS 类型）定义的字段名
+  - 如无明确定义，默认使用 `pageNo`/`pageSize`
 - **类型安全**
   - 所有状态和参数必须显式声明类型，不得使用 `any`
 - **职责单一**
   - Hook 只管理状态和调用 service，不处理 UI 渲染
+- **方法声明与提升**
+  - 在 `useEffect` 中调用的方法必须使用 `function` 关键字声明。
+  - 该 `function` 定义应当放置在 `useEffect` 调用之后，通过函数提升特性保持代码逻辑顺序。
 - **不使用 useCallback**
   - 除非有性能问题，否则不使用 useCallback，保持代码简洁
 

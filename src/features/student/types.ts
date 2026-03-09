@@ -1,24 +1,24 @@
 export interface Student {
   id: number;
-  name: string;
   studentNo: string;
-  gender: 'male' | 'female';
-  age: number;
-  grade: string;
+  name: string;
   className: string;
-  phone: string;
-  email: string;
   status: 0 | 1;
-  createdAt: string;
+  enrolledAt: string;
 }
 
 export interface StudentListQuery {
   pageNo: number;
   pageSize: number;
-  name?: string;
   studentNo?: string;
-  grade?: string;
-  status?: number;
+  name?: string;
+  className?: string;
+  status?: 0 | 1;
+}
+
+export interface StudentListResult {
+  list: Student[];
+  total: number;
 }
 
 export interface StudentListInfo {
@@ -26,18 +26,4 @@ export interface StudentListInfo {
   total: number;
   pageNo: number;
   pageSize: number;
-}
-
-export interface StudentDTO {
-  id: number;
-  name: string;
-  student_no: string;
-  gender: 'male' | 'female';
-  age: number;
-  grade: string;
-  class_name: string;
-  phone: string;
-  email: string;
-  status: number;
-  created_at: string;
 }

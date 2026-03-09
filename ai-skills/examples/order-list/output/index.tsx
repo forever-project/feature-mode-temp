@@ -13,10 +13,9 @@ import useOrderList from '@/features/order/hooks/useOrderList';
 const OrderListPage: React.FC = () => {
   const [form] = Form.useForm();
 
-  const { loading, orderListInfo, onPageChange, onSearch, refresh } =
-    useOrderList({
-      form,
-    });
+  const { loading, orderListInfo, onPageChange, onSearch, refresh } = useOrderList({
+    form,
+  });
 
   return (
     <Spin spinning={loading}>

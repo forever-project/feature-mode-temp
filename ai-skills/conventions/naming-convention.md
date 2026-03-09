@@ -14,16 +14,16 @@
 
 ## 文件命名
 
-| 场景 | 规范 | 示例 |
-| --- | --- | --- |
-| 组件文件 | PascalCase | `UserTable.tsx`, `OrderSearchForm.tsx` |
-| Hooks 文件 | camelCase | `useUserList.ts`, `useOrderDetail.ts` |
-| Services 文件 | index.ts | `index.ts` |
-| 页面文件 | 固定 `index.tsx` | `pages/user/UserList/index.tsx` |
-| 类型定义文件 | 固定 `types.ts` | `features/user/types.ts` |
-| 私有文件 | 下划线前缀 | `_columns.tsx`, `_utils.ts` |
-| 样式文件 | 固定命名 | `index.less`, `styles.module.css` |
-| Skill 文件 | kebab-case + .skill.md | `list-page-composition.skill.md` |
+| 场景          | 规范                   | 示例                                   |
+| ------------- | ---------------------- | -------------------------------------- |
+| 组件文件      | PascalCase             | `UserTable.tsx`, `OrderSearchForm.tsx` |
+| Hooks 文件    | camelCase              | `useUserList.ts`, `useOrderDetail.ts`  |
+| Services 文件 | index.ts               | `index.ts`                             |
+| 页面文件      | 固定 `index.tsx`       | `pages/user/UserList/index.tsx`        |
+| 类型定义文件  | 固定 `types.ts`        | `features/user/types.ts`               |
+| 私有文件      | 下划线前缀             | `_columns.tsx`, `_utils.ts`            |
+| 样式文件      | 固定命名               | `index.less`, `styles.module.css`      |
+| Skill 文件    | kebab-case + .skill.md | `list-page-composition.skill.md`       |
 
 ## 代码标识符命名
 
@@ -105,6 +105,10 @@ const queryOrderList = async () => {};
 const createUser = async () => {};
 const updateUser = async () => {};
 const deleteUser = async () => {};
+
+// 方法声明方式建议：
+// 1. 如果方法被 hook (如 useEffect) 内部直接引用，必须使用 function 关键字声明并置于 hook 之后（利用提升）。
+// 2. 普通事件处理和业务逻辑建议使用 const 箭头函数。
 ```
 
 ### 类型定义
@@ -149,7 +153,6 @@ interface PaginatedResult<Item> {
 // Props 类型 - 组件名 + Props
 interface UserTableProps {
   data: User[];
-  loading: boolean;
   onEdit: (user: User) => void;
 }
 
