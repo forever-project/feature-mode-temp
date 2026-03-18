@@ -1,0 +1,90 @@
+{
+  "name": "ai-code-review",
+  "displayName": "AI Code Review",
+  "description": "基于 ai-skills 规范的实时代码审查",
+  "version": "1.0.0",
+  "publisher": "your-org",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Linters",
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "AI Code Review",
+      "properties": {
+        "aiCodeReview.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "启用 AI Code Review"
+        },
+        "aiCodeReview.blockingOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "仅显示 Blocking 级别问题"
+        },
+        "aiCodeReview.reviewPatterns": {
+          "type": "array",
+          "default": [
+            "src/features/**/*.ts",
+            "src/features/**/*.tsx",
+            "src/pages/**/*.ts",
+            "src/pages/**/*.tsx"
+          ],
+          "description": "审查文件匹配模式"
+        },
+        "aiCodeReview.ignorePatterns": {
+          "type": "array",
+          "default": [
+            "**/*.d.ts",
+            "**/*.test.ts",
+            "**/*.spec.ts"
+          ],
+          "description": "忽略文件匹配模式"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "aiCodeReview.reviewFile",
+        "title": "审查当前文件",
+        "category": "AI Code Review"
+      },
+      {
+        "command": "aiCodeReview.reviewWorkspace",
+        "title": "审查整个工作区",
+        "category": "AI Code Review"
+      },
+      {
+        "command": "aiCodeReview.toggleRealtime",
+        "title": "切换实时代码审查",
+        "category": "AI Code Review"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "aiCodeReview.reviewFile",
+          "group": "9_cutcopypaste@5",
+          "when": "editorLangId == typescript || editorLangId == typescriptreact"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "typescript": "^5.0.0"
+  }
+}

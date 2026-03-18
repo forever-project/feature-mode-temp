@@ -1,0 +1,97 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'src/features/**'
+      - 'src/pages/**'
+      - 'src/components/**'
+
+jobs:
+  code-review:
+    name: 🤖 AI Code Review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # 需要最近两次提交来比较变更
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      
+      - name: Run AI Code Review
+        id: review
+        run: node scripts/code-review-bot.js
+        continue-on-error: true
+      
+      - name: Read review report
+        id: report
+        if: always()
+        run: |
+          if [ -f code-review-report.md ]; then
+            echo "content<<EOF" >> $GITHUB_OUTPUT
+            cat code-review-report.md >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Comment PR
+        if: steps.report.outputs.content != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const report = `${{ steps.report.outputs.content }}`;
+            
+            // 查找是否已有审查评论
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('AI Code Review Report')
+            );
+            
+            if (botComment) {
+              // 更新现有评论
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: report,
+              });
+              console.log('Updated existing review comment');
+            } else {
+              // 创建新评论
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: report,
+              });
+              console.log('Created new review comment');
+            }
+      
+      - name: Check blocking issues
+        if: steps.review.outcome == 'failure'
+        run: |
+          echo "❌ 发现 Blocking 级别问题，请修复后再合并"
+          exit 1
+      
+      - name: Review passed
+        if: steps.review.outcome == 'success'
+        run: |
+          echo "✅ AI Code Review 通过"
