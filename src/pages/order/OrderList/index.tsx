@@ -14,6 +14,13 @@ const OrderListPage: React.FC = () => {
         useOrderList({
             form,
         });
+    useEffect(() => {
+        a();
+    }, [])
+
+    function a() {
+        return 1 + 12
+    }
 
     return (
         <Spin spinning={loading}>
