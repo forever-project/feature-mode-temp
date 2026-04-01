@@ -15,10 +15,7 @@ const OrderListPage: React.FC = () => {
             form,
         });
 
-    useEffect(()=>{
-        a();
-    },[])
-    function a(){}
+
 
     return (
         <Spin spinning={loading}>
